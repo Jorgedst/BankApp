@@ -40,4 +40,14 @@ public class AccountsStorage {
         this.accounts.add(account);
         return true;
      }
+     
+     public boolean sortAccountsById() {
+        if (accounts.isEmpty()) {
+            return false;
+        } else {
+            // Ordenamos las cuentas por el ID
+            this.accounts.sort((obj1, obj2) -> obj1.getId().compareTo(obj2.getId()));
+        }
+        return true;
+    }
 }

@@ -8,6 +8,8 @@ import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.User;
 import core.models.storage.UserStorage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -61,4 +63,12 @@ public class UserController {
         }
     }
 
+    public static List<User> getSortedUsers() {
+        UserStorage userStorage = UserStorage.getInstance();
+        userStorage.sortUsersById();
+        return userStorage.getUsers();
+    }
+    
+    
+    
 }

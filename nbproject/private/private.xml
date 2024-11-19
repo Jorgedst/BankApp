@@ -3,18 +3,20 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/models/Transaction.java</file>
+            <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/models/User.java</file>
+            <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/controllers/TransactionController.java</file>
             <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/views/BankFrame.java</file>
             <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/main/Main.java</file>
             <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/controllers/AccountController.java</file>
-            <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/controllers/TransferController.java</file>
-            <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/models/Transaction.java</file>
-            <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/models/storage/Storage.java</file>
+            <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/models/storage/TransactionStorage.java</file>
             <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/models/Account.java</file>
-            <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/models/User.java</file>
+            <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/models/storage/AccountsStorage.java</file>
             <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/controllers/UserController.java</file>
             <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/controllers/utils/Status.java</file>
             <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/models/TransactionType.java</file>
             <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/controllers/utils/Response.java</file>
+            <file>file:/C:/Users/Dsilv/OneDrive/Documentos/Parcial3POO/parcial/src/core/models/storage/UserStorage.java</file>
         </group>
     </open-files>
 </project-private>

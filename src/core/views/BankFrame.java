@@ -11,11 +11,9 @@ import core.controllers.utils.Response;
 import core.models.Transaction;
 import core.models.Account;
 import core.models.User;
-import java.util.ArrayList;
-import java.util.Collections;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import core.models.TransactionType;
+import java.util.List;
 
 /**
  *
@@ -23,18 +21,11 @@ import core.models.TransactionType;
  */
 public class BankFrame extends javax.swing.JFrame {
 
-    private ArrayList<Account> accounts;
-    private ArrayList<Transaction> transactions;
-    private ArrayList<User> users;
-
     /**
      * Creates new form BankFrame
      */
     public BankFrame() {
         initComponents();
-        this.accounts = new ArrayList<>();
-        this.transactions = new ArrayList<>();
-        this.users = new ArrayList<>();
     }
 
     /**
@@ -575,7 +566,7 @@ public class BankFrame extends javax.swing.JFrame {
                     String destinationAccountId = destinationaccountTextField.getText();
                     String amount = amountTextField.getText();
 
-                    Response response = TransactionController.deposit(sourceAccountId, amount);
+                    Response response = TransactionController.deposit(sourceAccountId,destinationAccountId, amount);
 
                     if (response.getStatus() >= 500) {
                         JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
@@ -633,35 +624,34 @@ public class BankFrame extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
 
-        this.users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
+        List<User> users = UserController.getSortedUsers();
 
-        for (User user : this.users) {
+        for (User user : users) {
             model.addRow(new Object[]{user.getId(), user.getFirstname() + " " + user.getLastname(), user.getAge(), user.getNumAccounts()});
         }
     }//GEN-LAST:event_refreshusersButtonActionPerformed
 
     private void refreshaccountsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshaccountsButtonActionPerformed
-        // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
         model.setRowCount(0);
-
-        this.accounts.sort((obj1, obj2) -> (obj1.getId().compareTo(obj2.getId())));
-
-        for (Account account : this.accounts) {
+        List<Account> accounts = AccountController.getSortedAccounts();
+        for (Account account : accounts) {
             model.addRow(new Object[]{account.getId(), account.getOwner().getId(), account.getBalance()});
         }
     }//GEN-LAST:event_refreshaccountsButtonActionPerformed
 
     private void refreshtransactionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshtransactionsButtonActionPerformed
-        // TODO add your handling code here:
+        TransactionController transactionController = new TransactionController();
         DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
-        model.setRowCount(0);
-
-        ArrayList<Transaction> transactionsCopy = (ArrayList<Transaction>) this.transactions.clone();
-        Collections.reverse(transactionsCopy);
-
-        for (Transaction transaction : transactionsCopy) {
-            model.addRow(new Object[]{transaction.getType().name(), (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"), (transaction.getDestinationAccount() != null ? transaction.getDestinationAccount().getId() : "None"), transaction.getAmount()});
+        model.setRowCount(0); 
+        List<Transaction> transactions = transactionController.getSortedTransactions();
+        for (Transaction transaction : transactions) {
+            model.addRow(new Object[]{
+                transaction.getType().name(),
+                (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"),
+                (transaction.getDestinationAccount() != null ? transaction.getDestinationAccount().getId() : "None"),
+                transaction.getAmount()
+            });
         }
     }//GEN-LAST:event_refreshtransactionsButtonActionPerformed
 

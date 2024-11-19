@@ -6,6 +6,9 @@ package core.models.storage;
 
 import core.models.Transaction;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  *
@@ -33,5 +36,11 @@ public class TransactionStorage {
      public boolean addTransaction(Transaction transaction){
         this.transactions.add(transaction);
         return true;
+    }
+     
+     public List<Transaction> getSortedTransactions() {
+        List<Transaction> sortedTransactions = new ArrayList<>(transactions);
+        Collections.reverse(sortedTransactions);
+        return sortedTransactions;
     }
 }

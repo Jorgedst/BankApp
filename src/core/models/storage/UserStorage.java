@@ -8,6 +8,8 @@ import core.models.Account;
 import core.models.Transaction;
 import core.models.User;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  *
@@ -44,6 +46,15 @@ public class UserStorage {
             }
         }
         this.users.add(user);
+        return true;
+    }
+
+    public boolean sortUsersById() {
+        if (users.isEmpty()) {
+            return false;
+        } else {
+            this.users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
+        }
         return true;
     }
 

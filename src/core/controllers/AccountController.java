@@ -11,6 +11,7 @@ import core.models.User;
 import core.models.storage.AccountsStorage;
 import core.models.storage.UserStorage;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -80,6 +81,12 @@ public class AccountController {
         } catch (Exception ex) {
             return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
         }
+    }
+    
+    public static List<Account> getSortedAccounts() {
+        AccountsStorage accountStorage = AccountsStorage.getInstance();
+        accountStorage.sortAccountsById();  // Llamamos al método que ordena las cuentas
+        return accountStorage.getAccounts();
     }
 
 }
