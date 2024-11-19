@@ -33,7 +33,7 @@ public class AccountsStorage {
     }
      public boolean addAccount(Account account){
         for (Account a : this.accounts) {
-            if (a.getId() == a.getId()) {
+            if (a.getId() == account.getId()) {
                 return false;
             }
         }

@@ -21,8 +21,8 @@ public class AccountController {
 
     public static Response createAccount(String id, String initialBalance) {
         try {
+            // Validación del ID
             int idInt;
-            Double initialBalanceDouble;
             try {
                 idInt = Integer.parseInt(id);
                 if (idInt < 0) {
@@ -35,30 +35,8 @@ public class AccountController {
                 return new Response("Id must be numeric", Status.BAD_REQUEST);
             }
 
-            try {
-                UserStorage storage = UserStorage.getInstance();
-                AccountsStorage accountsStorage = AccountsStorage.getInstance();
-                ArrayList<Account> accounts = accountsStorage.getAccounts();
-                ArrayList<User> users = storage.getUsers();
-                User userSelected = null;
-                for (User user : users) {
-                    if (user.getId() == idInt) {
-                        userSelected = user;
-                        Random random = new Random();
-                        int first = random.nextInt(1000);
-                        int second = random.nextInt(1000000);
-                        int third = random.nextInt(100);
-                        String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
-                        accountsStorage.addAccount(new Account(accountId, userSelected));
-                    }
-                }
-                if (userSelected == null) {
-                    return new Response("Non-existent user", Status.BAD_REQUEST);
-                }
-            } catch (NullPointerException ex) {
-                return new Response("No users registered yet", Status.NOT_FOUND);
-            }
-
+            // Validación del balance inicial
+            Double initialBalanceDouble;
             try {
                 initialBalanceDouble = Double.parseDouble(initialBalance);
                 if (initialBalanceDouble < 0) {
@@ -68,7 +46,37 @@ public class AccountController {
                 return new Response("Initial Balance must be numeric", Status.BAD_REQUEST);
             }
 
-            return new Response("Account created succesfully", Status.CREATED);
+            // Verificación de usuario
+            UserStorage storage = UserStorage.getInstance();
+            AccountsStorage accountsStorage = AccountsStorage.getInstance();
+            ArrayList<User> users = storage.getUsers();
+            User userSelected = null;
+
+            // Buscar usuario por id
+            for (User user : users) {
+                if (user.getId() == idInt) {
+                    userSelected = user;
+                    break;
+                }
+            }
+
+            if (userSelected == null) {
+                return new Response("Non-existent user", Status.BAD_REQUEST);
+            }
+
+            // Generación de ID de cuenta
+            Random random = new Random();
+            int first = random.nextInt(1000); // Primer bloque de 3 dígitos
+            int second = random.nextInt(1000000); // Segundo bloque de 6 dígitos
+            int third = random.nextInt(100); // Tercer bloque de 2 dígitos
+
+            String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
+            Account newAccount = new Account(accountId, userSelected, initialBalanceDouble);
+            accountsStorage.addAccount(newAccount);
+
+            System.out.println("Account created with ID: " + accountId);
+
+            return new Response("Account created successfully", Status.CREATED);
         } catch (Exception ex) {
             return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
         }

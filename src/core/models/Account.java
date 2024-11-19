@@ -20,7 +20,6 @@ public class Account {
         this.id = id;
         this.owner = owner;
         this.balance = 0;
-        
         this.owner.addAccount(this);
     }
     
