@@ -5,6 +5,7 @@
 package core.views;
 
 import core.controllers.AccountController;
+import core.controllers.TransactionController;
 import core.controllers.UserController;
 import core.controllers.utils.Response;
 import core.models.Transaction;
@@ -12,7 +13,6 @@ import core.models.Account;
 import core.models.User;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import core.models.TransactionType;
@@ -22,11 +22,11 @@ import core.models.TransactionType;
  * @author edangulo
  */
 public class BankFrame extends javax.swing.JFrame {
-    
+
     private ArrayList<Account> accounts;
     private ArrayList<Transaction> transactions;
     private ArrayList<User> users;
-    
+
     /**
      * Creates new form BankFrame
      */
@@ -530,16 +530,16 @@ public class BankFrame extends javax.swing.JFrame {
         String firstname = firstnameTextField.getText();
         String lastname = lastnameTextField.getText();
         String age = ageTextField.getText();
-        
+
         Response response = UserController.registerUser(id, firstname, lastname, age);
-        
+
         if (response.getStatus() >= 500) {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
         } else if (response.getStatus() >= 400) {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
-            
+
             IDTextField.setText("");
             firstnameTextField.setText("");
             lastnameTextField.setText("");
@@ -550,16 +550,16 @@ public class BankFrame extends javax.swing.JFrame {
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
         String idAccount = IDACCOUNTTextField.getText();
         String initialBalance = initialbalanceTextField.getText();
-        
-        Response response = AccountController.createAccount(idAccount,initialBalance);
-        
+
+        Response response = AccountController.createAccount(idAccount, initialBalance);
+
         if (response.getStatus() >= 500) {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
         } else if (response.getStatus() >= 400) {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
-            
+
             IDACCOUNTTextField.setText("");
             initialbalanceTextField.setText("");
         }
@@ -573,7 +573,7 @@ public class BankFrame extends javax.swing.JFrame {
                 case "Deposit": {
                     String destinationAccountId = destinationaccountTextField.getText();
                     double amount = Double.parseDouble(amountTextField.getText());
-                    
+
                     Account destinationAccount = null;
                     for (Account account : this.accounts) {
                         if (account.getId().equals(destinationAccountId)) {
@@ -582,9 +582,9 @@ public class BankFrame extends javax.swing.JFrame {
                     }
                     if (destinationAccount != null) {
                         destinationAccount.deposit(amount);
-                        
+
                         this.transactions.add(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amount));
-                        
+
                         sourceaccountTextField.setText("");
                         destinationaccountTextField.setText("");
                         amountTextField.setText("");
@@ -594,7 +594,7 @@ public class BankFrame extends javax.swing.JFrame {
                 case "Withdraw": {
                     String sourceAccountId = sourceaccountTextField.getText();
                     double amount = Double.parseDouble(amountTextField.getText());
-                    
+
                     Account sourceAccount = null;
                     for (Account account : this.accounts) {
                         if (account.getId().equals(sourceAccountId)) {
@@ -603,7 +603,7 @@ public class BankFrame extends javax.swing.JFrame {
                     }
                     if (sourceAccount != null && sourceAccount.withdraw(amount)) {
                         this.transactions.add(new Transaction(TransactionType.WITHDRAW, sourceAccount, null, amount));
-                        
+
                         sourceaccountTextField.setText("");
                         destinationaccountTextField.setText("");
                         amountTextField.setText("");
@@ -613,28 +613,16 @@ public class BankFrame extends javax.swing.JFrame {
                 case "Transfer": {
                     String sourceAccountId = sourceaccountTextField.getText();
                     String destinationAccountId = destinationaccountTextField.getText();
-                    double amount = Double.parseDouble(amountTextField.getText());
-                    
-                    Account sourceAccount = null;
-                    Account destinationAccount = null;
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(sourceAccountId)) {
-                            sourceAccount = account;
-                        }
-                    }
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(destinationAccountId)) {
-                            destinationAccount = account;
-                        }
-                    }
-                    if (sourceAccount != null && destinationAccount != null && sourceAccount.withdraw(amount)) {
-                        destinationAccount.deposit(amount);
-                        
-                        this.transactions.add(new Transaction(TransactionType.TRANSFER, sourceAccount, destinationAccount, amount));
-                        
-                        sourceaccountTextField.setText("");
-                        destinationaccountTextField.setText("");
-                        amountTextField.setText("");
+                    String amount = amountTextField.getText();
+
+                    Response response = TransactionController.transfer(sourceAccountId,destinationAccountId,amount);
+
+                    if (response.getStatus() >= 500) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+                    } else if (response.getStatus() >= 400) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
                     }
                     break;
                 }
@@ -654,9 +642,9 @@ public class BankFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
-        
+
         this.users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
-        
+
         for (User user : this.users) {
             model.addRow(new Object[]{user.getId(), user.getFirstname() + " " + user.getLastname(), user.getAge(), user.getNumAccounts()});
         }
@@ -666,9 +654,9 @@ public class BankFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
         model.setRowCount(0);
-        
+
         this.accounts.sort((obj1, obj2) -> (obj1.getId().compareTo(obj2.getId())));
-        
+
         for (Account account : this.accounts) {
             model.addRow(new Object[]{account.getId(), account.getOwner().getId(), account.getBalance()});
         }
@@ -678,12 +666,12 @@ public class BankFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
         model.setRowCount(0);
-        
+
         ArrayList<Transaction> transactionsCopy = (ArrayList<Transaction>) this.transactions.clone();
         Collections.reverse(transactionsCopy);
-        
+
         for (Transaction transaction : transactionsCopy) {
-            model.addRow(new Object[]{transaction.getType().name(), (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"), (transaction.getDestinationAccount()!= null ? transaction.getDestinationAccount().getId() : "None"), transaction.getAmount()});
+            model.addRow(new Object[]{transaction.getType().name(), (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"), (transaction.getDestinationAccount() != null ? transaction.getDestinationAccount().getId() : "None"), transaction.getAmount()});
         }
     }//GEN-LAST:event_refreshtransactionsButtonActionPerformed
 

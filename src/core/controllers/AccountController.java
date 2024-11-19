@@ -8,7 +8,8 @@ import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.Account;
 import core.models.User;
-import core.models.storage.Storage;
+import core.models.storage.AccountsStorage;
+import core.models.storage.UserStorage;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -35,7 +36,9 @@ public class AccountController {
             }
 
             try {
-                Storage storage = Storage.getInstance();
+                UserStorage storage = UserStorage.getInstance();
+                AccountsStorage accountsStorage = AccountsStorage.getInstance();
+                ArrayList<Account> accounts = accountsStorage.getAccounts();
                 ArrayList<User> users = storage.getUsers();
                 User userSelected = null;
                 for (User user : users) {
@@ -46,7 +49,7 @@ public class AccountController {
                         int second = random.nextInt(1000000);
                         int third = random.nextInt(100);
                         String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
-                        storage.addAccount(new Account(accountId, userSelected));
+                        accountsStorage.addAccount(new Account(accountId, userSelected));
                     }
                 }
                 if (userSelected == null) {

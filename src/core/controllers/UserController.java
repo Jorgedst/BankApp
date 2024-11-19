@@ -7,7 +7,7 @@ package core.controllers;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.User;
-import core.models.storage.Storage;
+import core.models.storage.UserStorage;
 
 /**
  *
@@ -51,8 +51,8 @@ public class UserController {
                 return new Response("Age must be numeric", Status.BAD_REQUEST);
             }
 
-            Storage storage = Storage.getInstance();
-            if (!storage.addUser(new User(idInt, firstname, lastname, ageInt))) {
+            UserStorage userStorage = UserStorage.getInstance();
+            if (!userStorage.addUser(new User(idInt, firstname, lastname, ageInt))) {
                 return new Response("A person with that id already exists", Status.BAD_REQUEST);
             }
             return new Response("Person created successfully", Status.CREATED);
