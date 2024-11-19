@@ -571,42 +571,33 @@ public class BankFrame extends javax.swing.JFrame {
             String type = typeComboBox.getItemAt(typeComboBox.getSelectedIndex());
             switch (type) {
                 case "Deposit": {
+                    String sourceAccountId = sourceaccountTextField.getText();
                     String destinationAccountId = destinationaccountTextField.getText();
-                    double amount = Double.parseDouble(amountTextField.getText());
+                    String amount = amountTextField.getText();
 
-                    Account destinationAccount = null;
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(destinationAccountId)) {
-                            destinationAccount = account;
-                        }
-                    }
-                    if (destinationAccount != null) {
-                        destinationAccount.deposit(amount);
+                    Response response = TransactionController.deposit(sourceAccountId, amount);
 
-                        this.transactions.add(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amount));
-
-                        sourceaccountTextField.setText("");
-                        destinationaccountTextField.setText("");
-                        amountTextField.setText("");
+                    if (response.getStatus() >= 500) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+                    } else if (response.getStatus() >= 400) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
                     }
                     break;
                 }
                 case "Withdraw": {
                     String sourceAccountId = sourceaccountTextField.getText();
-                    double amount = Double.parseDouble(amountTextField.getText());
+                    String amount = amountTextField.getText();
 
-                    Account sourceAccount = null;
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(sourceAccountId)) {
-                            sourceAccount = account;
-                        }
-                    }
-                    if (sourceAccount != null && sourceAccount.withdraw(amount)) {
-                        this.transactions.add(new Transaction(TransactionType.WITHDRAW, sourceAccount, null, amount));
+                    Response response = TransactionController.withdraw(sourceAccountId, amount);
 
-                        sourceaccountTextField.setText("");
-                        destinationaccountTextField.setText("");
-                        amountTextField.setText("");
+                    if (response.getStatus() >= 500) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+                    } else if (response.getStatus() >= 400) {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
                     }
                     break;
                 }
@@ -614,8 +605,7 @@ public class BankFrame extends javax.swing.JFrame {
                     String sourceAccountId = sourceaccountTextField.getText();
                     String destinationAccountId = destinationaccountTextField.getText();
                     String amount = amountTextField.getText();
-
-                    Response response = TransactionController.transfer(sourceAccountId,destinationAccountId,amount);
+                    Response response = TransactionController.transfer(sourceAccountId, destinationAccountId, amount);
 
                     if (response.getStatus() >= 500) {
                         JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);

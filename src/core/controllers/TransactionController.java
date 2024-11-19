@@ -28,8 +28,6 @@ public class TransactionController {
         if (accounts == null || accounts.isEmpty()) {
             return new Response("No accounts registered", Status.NOT_FOUND);
         }
-
-        // Validar monto
         double amountDouble;
         try {
             amountDouble = Double.parseDouble(amount);
@@ -40,12 +38,12 @@ public class TransactionController {
             return new Response("Amount must be numeric", Status.BAD_REQUEST);
         }
 
-        // Buscar cuentas origen y destino
+      
         Account sourceAccount = null;
         for (Account account : accounts) {
             if (account.getId().equals(sourceAccountID)) {
                 sourceAccount = account;
-                break; // Detenemos el bucle al encontrar la cuenta
+                break;
             }
         }
 
@@ -53,11 +51,11 @@ public class TransactionController {
         for (Account account : accounts) {
             if (account.getId().equals(destinationAccountID)) {
                 destinationAccount = account;
-                break; // Detenemos el bucle al encontrar la cuenta
+                break; 
             }
         }
 
-        // Validar existencia de cuentas
+    
         if (sourceAccount == null) {
             return new Response("Source account does not exist", Status.BAD_REQUEST);
         }
@@ -65,21 +63,113 @@ public class TransactionController {
             return new Response("Destination account does not exist", Status.BAD_REQUEST);
         }
 
-        // Validar saldo suficiente
+   
         if (!sourceAccount.withdraw(amountDouble)) {
             return new Response("Insufficient balance in source account", Status.BAD_REQUEST);
         }
 
-        // Realizar transferencia
+    
         destinationAccount.deposit(amountDouble);
 
-        // Registrar transacción
+      
         TransactionStorage transactionStorage = TransactionStorage.getInstance();
         transactionStorage.addTransaction(
                 new Transaction(TransactionType.TRANSFER, sourceAccount, destinationAccount, amountDouble)
         );
 
         return new Response("Transaction completed successfully", Status.CREATED);
+    }
+
+    public static Response deposit(String sourceAccountID, String destinationAccountID, String amount) {
+        return new Response("Transaction completed successfully", Status.CREATED);
+    }
+
+    public static Response withdraw(String accountId, String amount) {
+        try {
+            Double amountDouble;
+            try {
+                amountDouble = Double.parseDouble(amount);
+                if (amountDouble <= 0) {
+                    return new Response("Amount must be greater than zero", Status.BAD_REQUEST);
+                }
+            } catch (NumberFormatException ex) {
+                return new Response("Amount must be numeric", Status.BAD_REQUEST);
+            }
+            AccountsStorage accountsStorage = AccountsStorage.getInstance();
+            ArrayList<Account> accounts = accountsStorage.getAccounts();
+
+            Account accountToWithdraw = null;
+            for (Account account : accounts) {
+                if (account.getId().equals(accountId)) {
+                    accountToWithdraw = account;
+                    break;
+                }
+            }
+
+            if (accountToWithdraw == null) {
+                return new Response("Account not found", Status.NOT_FOUND);
+            }
+
+            if (!accountToWithdraw.withdraw(amountDouble)) {
+                return new Response("Insufficient balance", Status.BAD_REQUEST);
+            }
+
+            TransactionStorage transactionStorage = TransactionStorage.getInstance();
+            transactionStorage.addTransaction(new Transaction(TransactionType.WITHDRAW, accountToWithdraw, null, amountDouble));
+
+            return new Response("Withdrawal successful", Status.CREATED);
+
+        } catch (Exception ex) {
+            return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public static Response deposit(String accountId, String amount) {
+        try {
+            
+            Double amountDouble;
+            try {
+                amountDouble = Double.parseDouble(amount);
+                if (amountDouble <= 0) {
+                    return new Response("Amount must be greater than zero", Status.BAD_REQUEST);
+                }
+            } catch (NumberFormatException ex) {
+                return new Response("Amount must be numeric", Status.BAD_REQUEST);
+            }
+
+          
+            AccountsStorage accountsStorage = AccountsStorage.getInstance();
+            ArrayList<Account> accounts = accountsStorage.getAccounts();
+
+            
+            Account accountToDeposit = null;
+            for (Account account : accounts) {
+                if (account.getId().equals(accountId)) {
+                    accountToDeposit = account;
+                    break;
+                }
+            }
+
+           
+            if (accountToDeposit == null) {
+                return new Response("Account not found", Status.NOT_FOUND);
+            }
+
+        
+            if (amountDouble > accountToDeposit.getBalance()) {
+                return new Response("Deposit amount exceeds account balance", Status.BAD_REQUEST);
+            }
+            accountToDeposit.deposit(amountDouble);
+
+          
+            TransactionStorage transactionStorage = TransactionStorage.getInstance();
+            transactionStorage.addTransaction(new Transaction(TransactionType.DEPOSIT, null, accountToDeposit, amountDouble));
+
+            return new Response("Deposit successful", Status.CREATED);
+
+        } catch (Exception ex) {
+            return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
