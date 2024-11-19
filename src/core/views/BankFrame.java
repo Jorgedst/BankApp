@@ -4,6 +4,9 @@
  */
 package core.views;
 
+import core.controllers.AccountController;
+import core.controllers.UserController;
+import core.controllers.utils.Response;
 import core.models.Transaction;
 import core.models.Account;
 import core.models.User;
@@ -12,7 +15,7 @@ import java.util.Collections;
 import java.util.Random;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import main.TransactionType;
+import core.models.TransactionType;
 
 /**
  *
@@ -523,51 +526,42 @@ public class BankFrame extends javax.swing.JFrame {
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
         // TODO add your handling code here:
-        try {
-            int id = Integer.parseInt(IDTextField.getText());
-            String firstname = firstnameTextField.getText();
-            String lastname = lastnameTextField.getText();
-            int age = Integer.parseInt(ageTextField.getText());
-            
-            this.users.add(new User(id, firstname, lastname, age));
+        String id = IDTextField.getText();
+        String firstname = firstnameTextField.getText();
+        String lastname = lastnameTextField.getText();
+        String age = ageTextField.getText();
+        
+        Response response = UserController.registerUser(id, firstname, lastname, age);
+        
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
             
             IDTextField.setText("");
             firstnameTextField.setText("");
             lastnameTextField.setText("");
             ageTextField.setText("");
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_registerButtonActionPerformed
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
-        // TODO add your handling code here:
-        try {
-            int userId = Integer.parseInt(IDACCOUNTTextField.getText());
-            double initialBalance = Double.parseDouble(initialbalanceTextField.getText());
+        String idAccount = IDACCOUNTTextField.getText();
+        String initialBalance = initialbalanceTextField.getText();
+        
+        Response response = AccountController.createAccount(idAccount,initialBalance);
+        
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
             
-            User selectedUser = null;
-            for (User user : this.users) {
-                if (user.getId() == userId && selectedUser == null) {
-                    selectedUser = user;
-                }
-            }
-            
-            if (selectedUser != null) {
-                Random random = new Random();
-                int first = random.nextInt(1000);
-                int second = random.nextInt(1000000);
-                int third = random.nextInt(100);
-                
-                String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
-                
-                this.accounts.add(new Account(accountId, selectedUser, initialBalance));
-                
-                IDACCOUNTTextField.setText("");
-                initialbalanceTextField.setText("");
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
+            IDACCOUNTTextField.setText("");
+            initialbalanceTextField.setText("");
         }
     }//GEN-LAST:event_createButtonActionPerformed
 
