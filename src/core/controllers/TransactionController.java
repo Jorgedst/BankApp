@@ -7,8 +7,10 @@ package core.controllers;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.Account;
+import core.models.Deposit;
 import core.models.Transaction;
 import core.models.TransactionType;
+import core.models.Withdraw;
 import core.models.storage.AccountsStorage;
 import core.models.storage.TransactionStorage;
 import core.models.storage.UserStorage;
@@ -62,11 +64,11 @@ public class TransactionController {
             return new Response("Destination account does not exist", Status.BAD_REQUEST);
         }
 
-        if (!sourceAccount.withdraw(amountDouble)) {
+        if (!Withdraw.withdraw(sourceAccount,amountDouble)) {
             return new Response("Insufficient balance in source account", Status.BAD_REQUEST);
         }
 
-        destinationAccount.deposit(amountDouble);
+        Deposit.deposit(destinationAccount, amountDouble);
 
         TransactionStorage transactionStorage = TransactionStorage.getInstance();
         transactionStorage.addTransaction(
@@ -123,8 +125,8 @@ public class TransactionController {
             }
 
             // Realizar el retiro de la cuenta origen y el depósito en la cuenta destino
-            sourceAccount.withdraw(amountDouble);
-            destinationAccount.deposit(amountDouble);
+            Withdraw.withdraw(sourceAccount,amountDouble);
+            Deposit.deposit(destinationAccount, amountDouble);
 
             // Registrar la transacción
             TransactionStorage transactionStorage = TransactionStorage.getInstance();
@@ -165,7 +167,7 @@ public class TransactionController {
                 return new Response("Account not found", Status.NOT_FOUND);
             }
 
-            if (!accountToWithdraw.withdraw(amountDouble)) {
+            if (!Withdraw.withdraw(accountToWithdraw,amountDouble)) {
                 return new Response("Insufficient balance", Status.BAD_REQUEST);
             }
 
