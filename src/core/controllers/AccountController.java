@@ -18,7 +18,7 @@ import java.util.Random;
  *
  * @author Dsilv
  */
-public class AccountController {
+public abstract class AccountController {
 
     public static Response createAccount(String id, String initialBalance) {
         try {

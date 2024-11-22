@@ -647,7 +647,7 @@ public class BankFrame extends javax.swing.JFrame {
         List<Transaction> transactions = transactionController.getSortedTransactions();
         for (Transaction transaction : transactions) {
             model.addRow(new Object[]{
-                transaction.getType().name(),
+                transaction.getType(),
                 (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"),
                 (transaction.getDestinationAccount() != null ? transaction.getDestinationAccount().getId() : "None"),
                 transaction.getAmount()

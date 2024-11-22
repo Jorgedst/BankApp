@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author PC
  */
-public class UserController {
+public abstract class UserController {
 
     public static Response registerUser(String id, String firstname, String lastname, String age) {
         try {

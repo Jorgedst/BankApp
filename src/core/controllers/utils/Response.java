@@ -9,7 +9,7 @@ package core.controllers.utils;
  * @author PC
  */
 public class Response {
-     private String message;
+    private String message;
     private int status;
     private Object object;
 

@@ -8,13 +8,18 @@ package core.models;
  *
  * @author rdmp3
  */
-public class Withdraw{
+public class Withdraw extends Transaction {
 
-    public static boolean withdraw(Account account, double amount) {
-        if (amount > account.getBalance()) {
-            return false;
-        }
-        account.setBalance(account.getBalance() - amount);
-        return true;
+    public Withdraw(Account sourceAccount, double amount) {
+        super(sourceAccount, null, amount);
+    }
+
+    @Override
+    public void execute() {
+        getSourceAccount().withdraw(getAmount());
+    }
+    @Override
+    public String getType() {
+        return "Withdraw";
     }
 }

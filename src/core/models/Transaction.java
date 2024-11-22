@@ -10,22 +10,15 @@ import core.models.Account;
  *
  * @author edangulo
  */
-public class Transaction {
-    
-    private TransactionType type;
+public abstract class Transaction {
     private Account sourceAccount;
     private Account destinationAccount;
     private double amount;
-    
-    public Transaction(TransactionType type, Account sourceAccount, Account destinationAccount, double amount) {
-        this.type = type;
+
+    public Transaction(Account sourceAccount, Account destinationAccount, double amount) {
         this.sourceAccount = sourceAccount;
         this.destinationAccount = destinationAccount;
         this.amount = amount;
-    }
-
-    public TransactionType getType() {
-        return type;
     }
 
     public Account getSourceAccount() {
@@ -39,5 +32,7 @@ public class Transaction {
     public double getAmount() {
         return amount;
     }
+    public abstract String getType();
     
+    public abstract void execute();
 }

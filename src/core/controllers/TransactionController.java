@@ -9,7 +9,7 @@ import core.controllers.utils.Status;
 import core.models.Account;
 import core.models.Deposit;
 import core.models.Transaction;
-import core.models.TransactionType;
+import core.models.Transfer;
 import core.models.Withdraw;
 import core.models.storage.AccountsStorage;
 import core.models.storage.TransactionStorage;
@@ -64,15 +64,15 @@ public class TransactionController {
             return new Response("Destination account does not exist", Status.BAD_REQUEST);
         }
 
-        if (!Withdraw.withdraw(sourceAccount,amountDouble)) {
+        if (!sourceAccount.withdraw(amountDouble)) {
             return new Response("Insufficient balance in source account", Status.BAD_REQUEST);
         }
 
-        Deposit.deposit(destinationAccount, amountDouble);
+        destinationAccount.deposit(amountDouble);
 
         TransactionStorage transactionStorage = TransactionStorage.getInstance();
         transactionStorage.addTransaction(
-                new Transaction(TransactionType.TRANSFER, sourceAccount, destinationAccount, amountDouble)
+                new Transfer(sourceAccount, destinationAccount, amountDouble)
         );
 
         return new Response("Transaction completed successfully", Status.CREATED);
@@ -125,13 +125,13 @@ public class TransactionController {
             }
 
             // Realizar el retiro de la cuenta origen y el depósito en la cuenta destino
-            Withdraw.withdraw(sourceAccount,amountDouble);
-            Deposit.deposit(destinationAccount, amountDouble);
+            sourceAccount.withdraw(amountDouble);
+            destinationAccount.deposit(amountDouble);
 
             // Registrar la transacción
             TransactionStorage transactionStorage = TransactionStorage.getInstance();
             transactionStorage.addTransaction(
-                    new Transaction(TransactionType.DEPOSIT, sourceAccount, destinationAccount, amountDouble)
+                    new Deposit(destinationAccount, amountDouble)
             );
 
             return new Response("Deposit successful", Status.CREATED);
@@ -167,12 +167,12 @@ public class TransactionController {
                 return new Response("Account not found", Status.NOT_FOUND);
             }
 
-            if (!Withdraw.withdraw(accountToWithdraw,amountDouble)) {
+            if (!accountToWithdraw.withdraw(amountDouble)) {
                 return new Response("Insufficient balance", Status.BAD_REQUEST);
             }
 
             TransactionStorage transactionStorage = TransactionStorage.getInstance();
-            transactionStorage.addTransaction(new Transaction(TransactionType.WITHDRAW, accountToWithdraw, null, amountDouble));
+            transactionStorage.addTransaction(new Withdraw(accountToWithdraw, amountDouble));
 
             return new Response("Withdrawal successful", Status.CREATED);
 

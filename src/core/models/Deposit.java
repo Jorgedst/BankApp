@@ -8,8 +8,17 @@ package core.models;
  *
  * @author rdmp3
  */
-public class Deposit {
-    public static void deposit(Account account, double amount) {
-        account.setBalance(account.getBalance() + amount);
+public class Deposit extends Transaction {
+
+    public Deposit(Account destinationAccount, double amount) {
+        super(null, destinationAccount, amount);
+    }
+    @Override
+    public void execute() {
+        getDestinationAccount().deposit(getAmount());
+    }
+    @Override
+    public String getType() {
+        return "Deposit";
     }
 }
