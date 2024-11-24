@@ -562,11 +562,10 @@ public class BankFrame extends javax.swing.JFrame {
             String type = typeComboBox.getItemAt(typeComboBox.getSelectedIndex());
             switch (type) {
                 case "Deposit": {
-                    String sourceAccountId = sourceaccountTextField.getText();
                     String destinationAccountId = destinationaccountTextField.getText();
                     String amount = amountTextField.getText();
 
-                    Response response = TransactionController.deposit(sourceAccountId,destinationAccountId, amount);
+                    Response response = TransactionController.deposit(destinationAccountId, amount);
 
                     if (response.getStatus() >= 500) {
                         JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);

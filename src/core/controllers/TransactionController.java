@@ -78,9 +78,9 @@ public class TransactionController {
         return new Response("Transaction completed successfully", Status.CREATED);
     }
 
-    public static Response deposit(String sourceAccountId, String destinationAccountId, String amount) {
+    public static Response deposit(String destinationAccountId, String amount) {
         try {
-            // Validar que el monto sea numérico y mayor que cero
+            
             double amountDouble;
             try {
                 amountDouble = Double.parseDouble(amount);
@@ -91,23 +91,11 @@ public class TransactionController {
                 return new Response("Amount must be numeric", Status.BAD_REQUEST);
             }
 
-            // Obtener la instancia de almacenamiento de cuentas
+            
             AccountsStorage accountsStorage = AccountsStorage.getInstance();
             ArrayList<Account> accounts = accountsStorage.getAccounts();
 
-            // Buscar la cuenta origen
-            Account sourceAccount = null;
-            for (Account account : accounts) {
-                if (account.getId().equals(sourceAccountId)) {
-                    sourceAccount = account;
-                    break;
-                }
-            }
-            if (sourceAccount == null) {
-                return new Response("Source account not found", Status.NOT_FOUND);
-            }
-
-            // Buscar la cuenta destino
+            
             Account destinationAccount = null;
             for (Account account : accounts) {
                 if (account.getId().equals(destinationAccountId)) {
@@ -118,17 +106,9 @@ public class TransactionController {
             if (destinationAccount == null) {
                 return new Response("Destination account not found", Status.NOT_FOUND);
             }
-
-            // Verificar que la cuenta origen tenga saldo suficiente
-            if (amountDouble > sourceAccount.getBalance()) {
-                return new Response("Insufficient balance in the source account", Status.BAD_REQUEST);
-            }
-
-            // Realizar el retiro de la cuenta origen y el depósito en la cuenta destino
-            sourceAccount.withdraw(amountDouble);
             destinationAccount.deposit(amountDouble);
 
-            // Registrar la transacción
+            
             TransactionStorage transactionStorage = TransactionStorage.getInstance();
             transactionStorage.addTransaction(
                     new Deposit(destinationAccount, amountDouble)
